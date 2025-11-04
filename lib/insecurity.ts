@@ -42,6 +42,69 @@ interface IAuthenticatedUsers {
 
 export const hash = (data: string) => crypto.createHash('md5').update(data).digest('hex')
 export const hmac = (data: string) => crypto.createHmac('sha256', 'pa4qacea4VK9t9nGv7yZtwmj').update(data).digest('hex')
+# MCP-LMM-FIX (javascript.lang.security.audit.hardcoded-hmac-key.hardcoded-hmac-key): Detected a hardcoded hmac key. Avoid hardcoding secrets and consider using an alternate option such as reading the secret from a config file or using an environment variable.
+: string
+   , cb: (err: any, user: ResponseWithUser) => void) => void
+  remove: (token: string) => void
+}
+
+const authenticatedUsers: IAuthenticatedUsers = {
+  tokenMap: {},
+  idMap: {},
+  put: (token, user) => {
+    authenticatedUsers.tokenMap[token] = user
+    authenticatedUsers.idMap[user.data.id] = token
+# MCP-LMM-FIX (javascript.jsonwebtoken.security.jwt-hardcode.hardcoded-jwt-secret): A hard-coded credential was detected. It is not recommended to store credentials in source-code, as this risks secrets being leaked and used by either an internal or external malicious adversary. It is recommended to use environment variables to securely provide credentials or retrieve credentials from a secure vault or HSM (Hardware Security Module).
+: string
+   , cb: (err: any, user: ResponseWithUser) => void) => void
+  remove: (token: string) => void
+}
+
+const authenticatedUsers: IAuthenticatedUsers = {
+  tokenMap: {},
+  idMap: {},
+  put: (token, user) => {
+    authenticatedUsers.tokenMap[token] = user
+    authenticatedUsers.idMap[user.data.id] = token
+  },
+  get: (token, cb) => {
+    const user = authenticatedUsers.tokenMap[token]
+    cb(null, user)
+  },
+  remove: (token) => {
+    const user = authenticatedUsers.tokenMap[token]
+    if (user) {
+      delete authenticatedUsers.tokenMap[token]
+      delete authenticatedUsers.idMap[user.data.id]
+    }
+  }
+}
+
+const jwtOptions = {
+  secret: privateKey,
+  algorithms: ['HS256']
+}
+
+const jwtMiddleware = expressJwt(jwtOptions).unless({
+  },
+  get: (token, cb) => {
+    const user = authenticatedUsers.tokenMap[token]
+    cb(null, user)
+  },
+  remove: (token) => {
+    const user = authenticatedUsers.tokenMap[token]
+    if (user) {
+      delete authenticatedUsers.tokenMap[token]
+      delete authenticatedUsers.idMap[user.data.id]
+    }
+  }
+}
+
+const jwtMiddleware = expressJwt({
+  secret: publicKey,
+  algorithms: ['RS256'],
+  getToken: (req) => {
+    if (req.headers.
 
 export const cutOffPoisonNullByte = (str: string) => {
   const nullByte = '%00'
@@ -87,6 +150,37 @@ export const authenticatedUsers: IAuthenticatedUsers = {
     return token ? this.get(token) : undefined
   },
   updateFrom: function (req: Request, user: ResponseWithUser) {
+# MCP-LMM-FIX (javascript.lang.security.audit.hardcoded-hmac-key.hardcoded-hmac-key): Detected a hardcoded hmac key. Avoid hardcoding secrets and consider using an alternate option such as reading the secret from a config file or using an environment variable.
+: string
+   , cb: (err: any, user: ResponseWithUser) => void) => void
+  remove: (token: string) => void
+}
+
+const authenticatedUsers: IAuthenticatedUsers = {
+  tokenMap: {},
+  idMap: {},
+  put: (token, user) => {
+    authenticatedUsers.tokenMap[token] = user
+    authenticatedUsers.idMap[user.data.id] = token
+  },
+  get: (token, cb) => {
+    const user = authenticatedUsers.tokenMap[token]
+    cb(null, user)
+  },
+  remove: (token) => {
+    const user = authenticatedUsers.tokenMap[token]
+    if (user) {
+      delete authenticatedUsers.tokenMap[token]
+      delete authenticatedUsers.idMap[user.data.id]
+    }
+  }
+}
+
+const jwtMiddleware = expressJwt({
+  secret: publicKey,
+  algorithms: ['RS256'],
+  getToken: (req) => {
+    if (req.headers.
     const token = utils.jwtFrom(req)
     this.put(token, user)
   }

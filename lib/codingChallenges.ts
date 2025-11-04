@@ -74,6 +74,54 @@ function getCodingChallengeFromFileContent (source: string, challengeKey: string
   const neutralLines = []
   for (let i = 0; i < lines.length; i++) {
     if (new RegExp(`vuln-code-snippet vuln-line.*${challengeKey}`).exec(lines[i]) != null) {
+# MCP-LMM-FIX (javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp): RegExp() called with a `challengeKey` function argument, this might allow an attacker to cause a Regular Expression Denial-of-Service (ReDoS) within your application as RegExP blocks the main thread. For this reason, it is recommended to use hardcoded regexes instead. If your regex is run on user-controlled input, consider performing input validation or use a regex checking/sanitization library such as https://www.npmjs.com/package/recheck to verify that the regex does not appear vulnerable to ReDoS.
+): CachedCodeChallenge {
+# MCP-LMM-FIX (javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp): RegExp() called with a `challengeKey` function argument, this might allow an attacker to cause a Regular Expression Denial-of-Service (ReDoS) within your application as RegExP blocks the main thread. For this reason, it is recommended to use hardcoded regexes instead. If your regex is run on user-controlled input, consider performing input validation or use a regex checking/sanitization library such as https://www.npmjs.com/package/recheck to verify that the regex does not appear vulnerable to ReDoS.
+): CachedCodeChallenge {
+  const vulnLines = []
+  const neutralLines = []
+
+  const snippetRegex = new RegExp(`(?<snippet>.*)// vuln-code-snippet end ${challengeKey}`, 'gs')
+  const snippetMatch = source.match(snippetRegex)
+  if (snippetMatch) {
+    const snippet = snippetMatch.groups?.snippet?? ''
+    const lines = snippet.split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes('// vuln-code' + '-snippet start')) {
+        vulnLines.push(i)
+      } else if (lines[i].includes('// vuln-code' + '-snippet end')) {
+        neutralLines.push(i)
+      }
+    }
+  }
+
+  return { snippet, vulnLines, neutralLines }
+}
+
+export const getCodingChallenges = async (): Promise<CachedCodeChallenge[]> => {
+  const files =
+  const vulnLines = []
+  const neutralLines = []
+
+  const snippetRegex = new RegExp(`(?<snippet>.*)// vuln-code-snippet end ${challengeKey}`, 'gs')
+  const snippetMatch = source.match(snippetRegex)
+  if (snippetMatch) {
+    const snippet = snippetMatch.groups?.snippet?? ''
+    const lines = snippet.split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].includes('// vuln-code' + '-snippet start')) {
+        vulnLines.push(i)
+      } else if (lines[i].includes('// vuln-code' + '-snippet end')) {
+        neutralLines.push(i)
+      }
+    }
+  }
+
+  return { snippet, vulnLines, neutralLines }
+}
+
+export const getCodingChallenges = async (): Promise<CachedCodeChallenge[]> => {
+  const files =
       vulnLines.push(i + 1)
     } else if (new RegExp(`vuln-code-snippet neutral-line.*${challengeKey}`).exec(lines[i]) != null) {
       neutralLines.push(i + 1)

@@ -120,6 +120,38 @@ function loadHint (hint: ChallengeHint): HTMLElement {
 
   const textBox = createElement('span', { flexGrow: '2' })
   textBox.innerHTML = snarkdown(hint.text)
+# MCP-LMM-FIX (javascript.browser.security.insecure-document-method.insecure-document-method): User controlled data in methods like `innerHTML`, `outerHTML` or `document.write` is an anti-pattern that can lead to XSS vulnerabilities
+*/
+  afterTarget: boolean
+}
+
+export function getChallengeInstructions(): ChallengeInstruction[] {
+  return challengeInstructions
+}
+
+export function getChallengeInstruction(challengeName: string): ChallengeInstruction | undefined {
+  return challengeInstructions.find(instruction => instruction.name === challengeName)
+}
+
+export function getChallengeHints(challengeName: string): ChallengeHint[] {
+  const challengeInstruction = getChallengeInstruction(challengeName)
+  if (challengeInstruction) {
+    return challengeInstruction.hints
+  }
+  return []
+}
+
+export function getChallengeHint(challengeName: string, hintIndex: number): ChallengeHint | undefined {
+  const hints = getChallengeHints(challengeName)
+  if (hints.length > hintIndex) {
+    return hints[hintIndex]
+  }
+  return undefined
+}
+
+export function getChallengeHintsCount(challengeName: string): number {
+  const hints = getChallengeHints(challengeName)
+  return hints.length
 
   const cancelButtonStyles = {
     textDecoration: 'none',

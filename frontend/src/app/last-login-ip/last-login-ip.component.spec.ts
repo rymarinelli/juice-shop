@@ -59,6 +59,44 @@ describe('LastLoginIpComponent', () => {
 
   xit('should set Last-Login IP from JWT as trusted HTML', () => { // FIXME Expected state seems to leak over from previous test case occasionally
     localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7Imxhc3RMb2dpbklwIjoiMS4yLjMuNCJ9fQ.RAkmdqwNypuOxv3SDjPO4xMKvd1CddKvDFYDBfUt3bg')
+# MCP-LMM-FIX (generic.secrets.security.detected-jwt-token.detected-jwt-token): JWT token detected
+console.log
+    ).toHaveBeenCalledWith(
+      'Error: Could not parse JWT token'
+    )
+  })
+# MCP-LMM-FIX (generic.secrets.security.detected-jwt-token.detected-jwt-token): JWT token detected
+console.log
+    ).toHaveBeenCalledWith(
+      'Error: Could not parse JWT token'
+    )
+  })
+
+  it('should log JWT decoding error to console', () => {
+    console.log = jasmine.createSpy('log')
+    localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+    component.ngOnInit()
+    expect(
+      console.log
+    ).toHaveBeenCalledWith(
+      'Error: Could not decode JWT token'
+    )
+  })
+
+  it('should log
+
+  it('should log JWT decoding error to console', () => {
+    console.log = jasmine.createSpy('log')
+    localStorage.setItem('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+    component.ngOnInit()
+    expect(
+      console.log
+    ).toHaveBeenCalledWith(
+      'Error: Could not decode JWT token'
+    )
+  })
+
+  it('should log
     component.ngOnInit()
     expect(sanitizer.bypassSecurityTrustHtml).toHaveBeenCalledWith('<small>1.2.3.4</small>')
   })
